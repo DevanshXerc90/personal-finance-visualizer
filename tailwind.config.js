@@ -1,4 +1,4 @@
-/**  tailwind.config.mjs (ESM) */
+
 const config = {
     content: [
         "./src/**/*.{ts,tsx,js,jsx,mdx}", // App  router & components

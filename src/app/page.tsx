@@ -11,7 +11,7 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 
-import './globals.css'; // ensures styles load here
+import './globals.css';
 
 interface Transaction {
     _id?: string;
@@ -41,7 +41,7 @@ export default function Home() {
         fetchTransactions();
     }, []);
 
-    /* ---------- CRUD handlers ---------- */
+
     const handleAdd = async () => {
         if (!amount || !description || !date) {
             return alert('Please fill all fields');
@@ -87,7 +87,7 @@ export default function Home() {
         fetchTransactions();
     };
 
-    /* ---------- Chart data ---------- */
+
     const monthlyData = transactions.reduce((acc, t) => {
         const month = new Date(t.date).toLocaleString('default', {
             month: 'short',
