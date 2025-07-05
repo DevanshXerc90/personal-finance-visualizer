@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-
 import { connectDB } from '@/lib/db';
 import Transaction from '@/models/Transaction';
 
@@ -11,8 +10,19 @@ export async function GET() {
 
 export async function POST(req: Request) {
     await connectDB();
-    const { amount, description, date } = await req.json();
-    const newTransaction = new Transaction({ amount, description, date });
+    const { amount, description, category, date } = await req.json(); // ✅ added category
+
+    if (!amount || !description || !category || !date) {
+        return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    }
+
+    const newTransaction = new Transaction({
+        amount,
+        description,
+        category,
+        date,
+    });
+
     await newTransaction.save();
     return NextResponse.json(newTransaction);
 }
@@ -26,11 +36,13 @@ export async function DELETE(req: Request) {
 
 export async function PUT(req: Request) {
     await connectDB();
-    const { id, amount, description, date } = await req.json();
+    const { id, amount, description, category, date } = await req.json(); // ✅ added category
+
     const updated = await Transaction.findByIdAndUpdate(
         id,
-        { amount, description, date },
+        { amount, description, category, date },
         { new: true }
     );
+
     return NextResponse.json(updated);
 }
