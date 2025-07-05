@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/db';
 import Transaction from '@/models/Transaction';
 
@@ -9,14 +10,27 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-    const body = await req.json();
-    const { amount, date, description } = body;
-
-    if (!amount || !date || !description) {
-        return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
-    }
-
     await connectDB();
-    const newTx = await Transaction.create({ amount, date, description });
-    return NextResponse.json(newTx, { status: 201 });
+    const { amount, description, date } = await req.json();
+    const newTransaction = new Transaction({ amount, description, date });
+    await newTransaction.save();
+    return NextResponse.json(newTransaction);
+}
+
+export async function DELETE(req: Request) {
+    await connectDB();
+    const { id } = await req.json();
+    await Transaction.findByIdAndDelete(id);
+    return NextResponse.json({ message: 'Deleted' });
+}
+
+export async function PUT(req: Request) {
+    await connectDB();
+    const { id, amount, description, date } = await req.json();
+    const updated = await Transaction.findByIdAndUpdate(
+        id,
+        { amount, description, date },
+        { new: true }
+    );
+    return NextResponse.json(updated);
 }
